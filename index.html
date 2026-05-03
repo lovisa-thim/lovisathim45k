@@ -1,16 +1,225 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>45km 2026</title>
-    <style>
-      body {
-        background-color: black;
-        color: blue;
-        font-family: Arial, sans-serif;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Min väg till att klara Ultravasan den 15 augusti 2026!</h1>
-  </body>
+<head>
+  <title>Min träning</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: #080C76;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      margin: 30px;
+    }
+
+    .layout {
+      display: flex;
+      gap: 30px;
+      padding: 0 30px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: #111;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(77, 166, 255, 0.15);
+    }
+
+    .activities-card {
+      width: 340px;
+    }
+
+    #activity-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    #activity-list li {
+      background: #1a1a1a;
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 220px);
+      gap: 20px;
+    }
+
+    .big-number {
+      font-size: 34px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .progress-container {
+      background: #222;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 18px;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      background: #4da6ff;
+      height: 100%;
+      width: 0%;
+    }
+
+    .chart-card {
+      margin: 30px;
+      max-width: 700px;
+    }
+
+    .summary {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: #111;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(77, 166, 255, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🏃 Min träning</h1>
+
+  <div class="layout">
+
+    <div class="card activities-card">
+      <h2>Senaste aktiviteter</h2>
+      <ul id="activity-list"></ul>
+    </div>
+
+    <div class="dashboard">
+      <div class="card">
+        <h3>Veckomål</h3>
+        <div class="big-number" id="goal-progress"></div>
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Antal pass</h3>
+        <div class="big-number" id="activity-count"></div>
+      </div>
+
+      <div class="card">
+        <h3>Längsta pass</h3>
+        <div class="big-number" id="longest-activity"></div>
+      </div>
+
+      <div class="card">
+        <h3>Status</h3>
+        <p id="message"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card chart-card">
+    <h2>Distans per pass</h2>
+    <canvas id="distance-chart"></canvas>
+  </div>
+
+  <div class="summary">
+    <h2 id="weekly-summary">Antal km senaste veckan:</h2>
+  </div>
+
+<script>
+const activities = [
+  { name: "Löpning", date: "2026-05-03", distance_km: 5.2 },
+  { name: "Promenad", date: "2026-05-02", distance_km: 3.1 },
+  { name: "Löpning", date: "2026-05-01", distance_km: 7.4 },
+  { name: "Cykling", date: "2026-04-29", distance_km: 12.0 },
+  { name: "Löpning", date: "2026-04-26", distance_km: 4.8 }
+];
+
+const weeklyGoal = 25;
+
+// Lista aktiviteter
+const list = document.getElementById("activity-list");
+
+activities.forEach(activity => {
+  const item = document.createElement("li");
+  item.innerHTML = `
+    <strong>${activity.name}</strong><br>
+    ${activity.date} – ${activity.distance_km} km
+  `;
+  list.appendChild(item);
+});
+
+// Senaste veckan
+const today = new Date();
+const oneWeekAgo = new Date();
+oneWeekAgo.setDate(today.getDate() - 7);
+
+const weeklyActivities = activities.filter(activity =>
+  new Date(activity.date) >= oneWeekAgo
+);
+
+const weeklyKm = weeklyActivities.reduce(
+  (sum, activity) => sum + activity.distance_km, 0
+);
+
+// Summering
+document.getElementById("weekly-summary").innerHTML =
+  `Antal km senaste veckan: ${weeklyKm.toFixed(1)} km`;
+
+// Veckomål
+const progressPercent = Math.min((weeklyKm / weeklyGoal) * 100, 100);
+
+document.getElementById("goal-progress").innerHTML =
+  `${weeklyKm.toFixed(1)} / ${weeklyGoal} km`;
+
+document.getElementById("progress-bar").style.width =
+  `${progressPercent}%`;
+
+// Antal pass
+document.getElementById("activity-count").innerHTML =
+  weeklyActivities.length;
+
+// Längsta pass
+const longest = activities.reduce((max, activity) =>
+  activity.distance_km > max.distance_km ? activity : max
+);
+
+document.getElementById("longest-activity").innerHTML =
+  `${longest.distance_km} km`;
+
+// Meddelande
+const message = document.getElementById("message");
+
+if (weeklyKm >= weeklyGoal) {
+  message.innerHTML = "🔥 Du har nått veckomålet!";
+} else if (weeklyKm >= weeklyGoal * 0.7) {
+  message.innerHTML = "💪 Du är nära målet!";
+} else {
+  message.innerHTML = "🚀 Fortsätt, du är igång!";
+}
+
+// Graf
+new Chart(document.getElementById("distance-chart"), {
+  type: "bar",
+  data: {
+    labels: activities.map(activity => activity.date),
+    datasets: [{
+      label: "Km",
+      data: activities.map(activity => activity.distance_km)
+    }]
+  }
+});
+</script>
+
+</body>
 </html>
