@@ -176,13 +176,25 @@
   </div>
 
 <script>
-const activities = [
-  { name: "Löpning", date: "2026-05-03", distance_km: 5.2 },
-  { name: "Promenad", date: "2026-05-02", distance_km: 3.1 },
-  { name: "Löpning", date: "2026-05-01", distance_km: 7.4 },
-  { name: "Cykling", date: "2026-04-29", distance_km: 12.0 },
-  { name: "Löpning", date: "2026-04-26", distance_km: 4.8 }
-];
+fetch("data.json")
+  .then(response => response.json())
+  .then(activities => {
+
+    // 👉 ALL din kod ska ligga här inne nu
+
+    const list = document.getElementById("activity-list");
+
+    activities.forEach(activity => {
+      const item = document.createElement("li");
+      item.innerHTML = `
+        <strong>${activity.name}</strong><br>
+        ${activity.date} – ${activity.distance_km} km
+      `;
+      list.appendChild(item);
+    });
+
+    // resten av din logik (weekly km osv)
+  });
 
 const weeklyGoal = 25;
 
