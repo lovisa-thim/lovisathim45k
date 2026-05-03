@@ -8,8 +8,42 @@
     body {
       margin: 0;
       background-color: black;
-      color: #080C76;
+      color: white;
       font-family: Arial, sans-serif;
+    }
+
+    /* Rubriker */
+    h1, h2, h3 {
+      color: #080C76;
+    }
+
+    #activity-list li {
+      background: #1a1a1a;
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      border-left: 3px solid #080C76;
+    }
+
+    /* Viktiga siffror */
+    .big-number {
+      font-size: 34px;
+      font-weight: bold;
+      color: #080C76;
+    }
+
+    /* Cards */
+    .card {
+      background: #111;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(8, 12, 118, 0.2);
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      background: #080C76;
+      height: 100%;
     }
 
     h1 {
@@ -91,7 +125,12 @@
 
 <body>
 
-  <h1>🏃 Min träning</h1>
+  <h1 style="color: white;">
+    Min väg till att klara <span style="color:#080C76;">Ultravasan</span><br>
+    <span style="font-size:18px; color: #aaa;">
+      25 augusti 2026
+    </span>
+  </h1>
 
   <div class="layout">
 
